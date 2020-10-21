@@ -28,7 +28,7 @@ INSERT INTO @tempIndexTable (IndexName, IndexType, TableName, AvgFragmentationIn
 )
 
 PRINT 'Indexes to rebuild:'
-SELECT * FROM @tempIndexTable;
+SELECT * FROM @tempIndexTable order by AvgFragmentationInPercent desc;
 
 RETURN; -- Uncomment this line if you want to run the command
 
