@@ -3,7 +3,7 @@
  
  declare @dateFrom datetime = '2020-10-23 00:33:17.947'
 
- /* List all current versions of documents by content type - older than @dateFrom  */
+ /* List all current versions of documents by content type - newer than @dateFrom  */
  select 
  umbdocument.*,
  umbContentVersion.*, 
