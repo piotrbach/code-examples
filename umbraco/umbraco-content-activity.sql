@@ -2,11 +2,12 @@
 
  declare @dateFrom datetime = '2021-01-01 00:00:01.947'
 
- /* List all current versions of documents newer than @dateFrom  */
+ /* List all current versions of documents newer than @dateFrom Trimmed view */
  select 
- umbdocument.*,
- umbContentVersion.*, 
- umbcontentType.*,
+ umbdocument.nodeId,
+ umbContentVersion.versionDate, 
+ umbContentVersion.[text], 
+ umbcontentType.alias,
  umbracoUser.userEmail  
  from [umbracoDocument] umbdocument
  join [umbracoContent] umbContent on umbdocument.nodeId = umbContent.nodeId
@@ -17,12 +18,11 @@
  and umbContentVersion.versionDate > @dateFrom
  order by umbContentVersion.versionDate desc
  
- /* Trimmed view */
+ /* List all current versions of documents newer than @dateFrom - full view */
  select 
- umbdocument.nodeId,
- umbContentVersion.versionDate, 
- umbContentVersion.[text], 
- umbcontentType.alias,
+ umbdocument.*,
+ umbContentVersion.*, 
+ umbcontentType.*,
  umbracoUser.userEmail  
  from [umbracoDocument] umbdocument
  join [umbracoContent] umbContent on umbdocument.nodeId = umbContent.nodeId
