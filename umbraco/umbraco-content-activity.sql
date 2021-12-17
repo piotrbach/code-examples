@@ -2,7 +2,9 @@
 
  declare @now datetime = getdate()
  declare @dateFrom datetime = getdate()
- set @dateFrom = dateadd(day,-7,@now) -- last 7 days
+ declare @days int = 7 -- last 7 days
+  
+ set @dateFrom = dateadd(day,-@days,@now) 
 
  /* List all current versions of documents newer than @dateFrom Trimmed view */
  select 
