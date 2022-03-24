@@ -35,7 +35,7 @@ INSERT INTO @tempIndexTable (IndexName, IndexType, TableName, SchemaName, AvgFra
 PRINT 'Indexes to rebuild:'
 SELECT * FROM @tempIndexTable;
 
---RETURN; -- Uncomment this line if you want to run the command
+RETURN; -- remove this line if you want to run the command
 
 DECLARE @totalCount INTEGER
 SELECT @totalCount = count(1) FROM @tempIndexTable
