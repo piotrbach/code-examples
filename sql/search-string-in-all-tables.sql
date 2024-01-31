@@ -1,4 +1,4 @@
--- This script searches for a specific text in all text-based columns across the database.
+-- This script searches for a specific text in all text-based columns across the MSSQL database.
 -- Adjust the data types, schema, and search string as needed for your specific requirements.
 
 DECLARE @TargetString VARCHAR(255) = 'Piotr Bach' -- The text string to search for
