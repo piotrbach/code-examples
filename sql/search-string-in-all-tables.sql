@@ -22,12 +22,12 @@ WHILE @@FETCH_STATUS = 0
 BEGIN
     -- Construct the SQL query for the current column
     SET @DynamicSQL = 'SELECT * FROM [' + @CurrentSchemaName + '].[' + @CurrentTableName + '] WHERE [' + @CurrentColumnName + '] LIKE ''%' + @TargetString + '%'''
-    
-    -- Print the dynamic SQL for debugging purposes
-    PRINT('Executing search for "' + @TargetString + '" in schema [' + @CurrentSchemaName + '], table [' + @CurrentTableName + '], column [' + @CurrentColumnName + '].')
-
+ 
     -- Execute the dynamic SQL
     EXEC sp_executesql @DynamicSQL
+
+    -- Print the dynamic SQL for debugging purposes
+    PRINT('Executed search for "' + @TargetString + '" in schema [' + @CurrentSchemaName + '], table [' + @CurrentTableName + '], column [' + @CurrentColumnName + '].')
 
     FETCH NEXT FROM ColumnCursor INTO @CurrentSchemaName, @CurrentTableName, @CurrentColumnName
 END
