@@ -10,12 +10,14 @@ The script collects information from the following system DMVs:
 - sys.indexes: Provides metadata about indexes.
 - sys.tables: Provides metadata about tables.
 - sys.schemas: Provides metadata about schemas.
+- sys.index_columns and sys.columns: Provides details about index included columns.
 
 The key statistics include:
 - User seeks, scans, lookups, and updates.
 - System seeks, scans, lookups, and updates.
 - Last user seek, scan, lookup, and update times.
 - Index operational statistics (leaf_insert_count, leaf_update_count, leaf_delete_count).
+- Included columns in the indexes.
 
 The results are returned for review to help understand the efficiency of index usage on individual tables.
 */
@@ -58,6 +60,7 @@ CREATE TABLE #IndexUsageStats (
     TableName NVARCHAR(128),
     IndexName NVARCHAR(128),
     IndexType NVARCHAR(128),
+    IncludedColumns NVARCHAR(MAX),
     UserSeeks BIGINT,
     UserScans BIGINT,
     UserLookups BIGINT,
@@ -80,12 +83,19 @@ CREATE TABLE #IndexUsageStats (
 );
 
 -- Collect index usage statistics
-INSERT INTO #IndexUsageStats (SchemaName, TableName, IndexName, IndexType, UserSeeks, UserScans, UserLookups, UserUpdates, SystemSeeks, SystemScans, SystemLookups, SystemUpdates, LastUserSeek, LastUserScan, LastUserLookup, LastUserUpdate, LastSystemSeek, LastSystemScan, LastSystemLookup, LastSystemUpdate, LeafInsertCount, LeafUpdateCount, LeafDeleteCount)
+INSERT INTO #IndexUsageStats (SchemaName, TableName, IndexName, IndexType, IncludedColumns, UserSeeks, UserScans, UserLookups, UserUpdates, SystemSeeks, SystemScans, SystemLookups, SystemUpdates, LastUserSeek, LastUserScan, LastUserLookup, LastUserUpdate, LastSystemSeek, LastSystemScan, LastSystemLookup, LastSystemUpdate, LeafInsertCount, LeafUpdateCount, LeafDeleteCount)
 SELECT 
     s.name AS SchemaName,
     t.name AS TableName,
     i.name AS IndexName,
     CASE WHEN i.type_desc = 'NONCLUSTERED' THEN 'NONCLUSTERED' ELSE 'UNKNOWN' END AS IndexType,
+    STUFF((
+        SELECT ', ' + c.name
+        FROM sys.index_columns ic
+        JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
+        WHERE ic.object_id = i.object_id AND ic.index_id = i.index_id AND ic.is_included_column = 1
+        FOR XML PATH(''), TYPE
+    ).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS IncludedColumns,
     ISNULL(us.user_seeks, 0) AS UserSeeks,
     ISNULL(us.user_scans, 0) AS UserScans,
     ISNULL(us.user_lookups, 0) AS UserLookups,
@@ -139,6 +149,7 @@ SELECT
     TableName,
     IndexName,
     IndexType,
+    IncludedColumns,
     UserSeeks,
     UserScans,
     UserLookups,
