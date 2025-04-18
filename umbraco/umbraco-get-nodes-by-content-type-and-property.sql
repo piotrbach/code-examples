@@ -9,7 +9,7 @@
     cmsPropertyType, and umbracoPropertyData to extract the current 
     version of each content node along with the value of the specified property.
 
-    Compatible with: Umbraco 13
+    Tested on Umbraco 8 through 13
 */
 
 DECLARE @ContentTypeAlias NVARCHAR(255) = 'message';
@@ -36,7 +36,7 @@ SELECT
     un.[text] AS NodeName,
     cv.versionDate,
     pt.alias AS PropertyAlias,
-    pd.[textValue] AS Value
+    pd.*
 FROM [umbracoNode] un
 JOIN [umbracoContent] uc ON uc.nodeId = un.id
 JOIN [umbracoContentVersion] cv ON cv.nodeId = un.id AND cv.[current] = 1
