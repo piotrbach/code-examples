@@ -26,7 +26,7 @@
 DECLARE @Extensions TABLE (ext NVARCHAR(10));
 INSERT INTO @Extensions (ext)
 VALUES
-	('.png'),
+    ('.png'),
     ('.jfif'),
     ('.tif'),
     ('.eps'),
