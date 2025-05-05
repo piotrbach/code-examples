@@ -21,6 +21,8 @@
     https://umbracare.net/services/umbraco-performance-tuning-and-optimization/
 */
 
+-- Base URL of the Umbraco Backoffice (no trailing slash)
+DECLARE @UmbracoHostUrl NVARCHAR(200) = 'https://umbraco-portal';
 
 -- List of file extensions to include
 DECLARE @Extensions TABLE (ext NVARCHAR(10));
@@ -45,14 +47,13 @@ DECLARE @LargeFileThreshold BIGINT = 5000000;
 	SELECT
 		n.id AS MediaNodeId,
 		n.text AS MediaName,
-		ucv.id AS ContentVersionId,
-		umv.id AS MediaVersionId,
 		umv.path,
-
+		CONCAT(@UmbracoHostUrl, '/umbraco#/media/media/edit/', n.id) AS EditUrl,
 		-- Extract and cast file size
 		CAST(pd.varcharValue AS BIGINT) AS FileSizeBytes,
 		CAST(pd.varcharValue AS FLOAT) / 1024 / 1024 AS FileSizeMB,
-
+		ucv.id AS ContentVersionId,
+		umv.id AS MediaVersionId,
 		-- Flag: is the file larger than the defined threshold?
 		CASE 
 			WHEN CAST(pd.varcharValue AS BIGINT) >= @LargeFileThreshold THEN CAST(1 AS BIT)
